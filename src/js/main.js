@@ -1,6 +1,8 @@
 import modal from './modules/modal';
 import slider from './modules/slider';
 import forms from './modules/form';
+import mask from './modules/mask';
+import checkTextInputs from './modules/checkTextInputs';
 
 window.addEventListener('DOMContentLoaded', () => {
     modal('.button-design', '.popup-design', '.popup-content > button.popup-close');
@@ -11,4 +13,8 @@ window.addEventListener('DOMContentLoaded', () => {
     slider('.feedback-slider-item', '', '.main-prev-btn', '.main-next-btn');
 
     forms('form');
+
+    mask('[name="phone"]');
+    checkTextInputs('[name="name"]');
+    checkTextInputs('[name="message"]');
 });
