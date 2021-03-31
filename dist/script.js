@@ -931,11 +931,15 @@ module.exports = g;
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_modal__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/modal */ "./src/js/modules/modal.js");
+/* harmony import */ var _modules_slider__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/slider */ "./src/js/modules/slider.js");
+
 
 window.addEventListener('DOMContentLoaded', function () {
   Object(_modules_modal__WEBPACK_IMPORTED_MODULE_0__["default"])('.button-design', '.popup-design', '.popup-content > button.popup-close');
   Object(_modules_modal__WEBPACK_IMPORTED_MODULE_0__["default"])('.button-consultation', '.popup-consultation', '.popup-content > button.popup-close');
   Object(_modules_modal__WEBPACK_IMPORTED_MODULE_0__["default"])('.fixed-gift', '.popup-gift', '.popup-content > button.popup-close', true);
+  Object(_modules_slider__WEBPACK_IMPORTED_MODULE_1__["default"])('.main-slider-item', 'vertical');
+  Object(_modules_slider__WEBPACK_IMPORTED_MODULE_1__["default"])('.feedback-slider-item', '', '.main-prev-btn', '.main-next-btn');
 });
 
 /***/ }),
@@ -1052,6 +1056,100 @@ function openByScroll(btnPressed, selector) {
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (modal);
+
+/***/ }),
+
+/***/ "./src/js/modules/slider.js":
+/*!**********************************!*\
+  !*** ./src/js/modules/slider.js ***!
+  \**********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0__);
+
+
+var slider = function slider(slides, direction, prev, next) {
+  var slideIndex = 1,
+      paused = false;
+  var items = document.querySelectorAll(slides); // Показ нужного слайда
+
+  function showSlides(n) {
+    // Сбрасываем значение slideIndex, чтобы не сломать логику слайдера
+    if (n > items.length) {
+      slideIndex = 1;
+    }
+
+    if (n < 1) {
+      slideIndex = items.length;
+    } // Скрытие всех слайдов
+
+
+    items.forEach(function (item) {
+      item.classList.add('animated');
+      item.style.display = 'none';
+    }); // Показ нужного(начального) слайда
+
+    items[slideIndex - 1].style.display = 'block';
+  }
+
+  showSlides(slideIndex); // Показ следующего слайда
+
+  function nextSlide(n) {
+    showSlides(slideIndex += n);
+  }
+  /*Чтобы не сломать код, при отсутствии переключателей для слайдера используется try..catch
+    и настраиваем переключатели для слайдера(если они есть)  
+  */
+
+
+  try {
+    var prevBtn = document.querySelector(prev),
+        nextBtn = document.querySelector(next); // Кнопка "следующий" слайд
+
+    prevBtn.addEventListener('click', function () {
+      nextSlide(-1);
+      items[slideIndex - 1].classList.remove('slideInLeft');
+      items[slideIndex - 1].classList.add('slideInRight');
+    }); // Кнопка "предыдущий" слайд
+
+    nextBtn.addEventListener('click', function () {
+      nextSlide(1);
+      items[slideIndex - 1].classList.add('slideInLeft');
+      items[slideIndex - 1].classList.remove('slideInRight');
+    });
+  } catch (error) {} // Автоматические воспроизведение слайдера в зависимости от заданного направления
+
+
+  function activateAnimation() {
+    if (direction == 'vertical') {
+      paused = setInterval(function () {
+        nextSlide(1);
+        items[slideIndex - 1].classList.add('slideInDown');
+      }, 3000);
+    } else {
+      paused = setInterval(function () {
+        nextSlide(1);
+        items[slideIndex - 1].classList.add('slideInLeft');
+        items[slideIndex - 1].classList.remove('slideInRight');
+      }, 3000);
+    }
+  }
+
+  activateAnimation(); // Остановка/запуск автоматического слайдера при наведении на него
+
+  items[0].parentNode.addEventListener('mouseenter', function () {
+    clearInterval(paused);
+  });
+  items[0].parentNode.addEventListener('mouseleave', function () {
+    activateAnimation();
+  });
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (slider);
 
 /***/ })
 
