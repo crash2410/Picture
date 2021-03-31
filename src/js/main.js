@@ -1,5 +1,6 @@
 import modal from './modules/modal';
 import slider from './modules/slider';
+import forms from './modules/form';
 
 window.addEventListener('DOMContentLoaded', () => {
     modal('.button-design', '.popup-design', '.popup-content > button.popup-close');
@@ -8,4 +9,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
     slider('.main-slider-item', 'vertical');
     slider('.feedback-slider-item', '', '.main-prev-btn', '.main-next-btn');
+
+    forms('form');
 });
