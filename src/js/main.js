@@ -19,5 +19,5 @@ window.addEventListener('DOMContentLoaded', () => {
     checkTextInputs('[name="name"]');
     checkTextInputs('[name="message"]');
 
-    showMoreStyle('.button-styles', '.styles-2');
+    showMoreStyle('.button-styles', '#styles .row');
 });
