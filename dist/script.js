@@ -4157,6 +4157,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_form__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/form */ "./src/js/modules/form.js");
 /* harmony import */ var _modules_mask__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/mask */ "./src/js/modules/mask.js");
 /* harmony import */ var _modules_checkTextInputs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/checkTextInputs */ "./src/js/modules/checkTextInputs.js");
+/* harmony import */ var _modules_showMoreStyle__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/showMoreStyle */ "./src/js/modules/showMoreStyle.js");
+
 
 
 
@@ -4172,6 +4174,7 @@ window.addEventListener('DOMContentLoaded', function () {
   Object(_modules_mask__WEBPACK_IMPORTED_MODULE_3__["default"])('[name="phone"]');
   Object(_modules_checkTextInputs__WEBPACK_IMPORTED_MODULE_4__["default"])('[name="name"]');
   Object(_modules_checkTextInputs__WEBPACK_IMPORTED_MODULE_4__["default"])('[name="message"]');
+  Object(_modules_showMoreStyle__WEBPACK_IMPORTED_MODULE_5__["default"])('.button-styles', '.styles-2');
 });
 
 /***/ }),
@@ -4354,6 +4357,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var mask = function mask(selector) {
+  // Установка позиции курсора
   var setCursorPosition = function setCursorPosition(position, element) {
     element.focus();
 
@@ -4373,21 +4377,25 @@ var mask = function mask(selector) {
     var matrix = '+7 (___) ___ __ __',
         i = 0,
         def = matrix.replace(/\D/g, ''),
-        value = this.value.replace(/\D/g, '');
+        value = this.value.replace(/\D/g, ''); // Запрещаем пользователю удалять шаблон ввода номера
 
     if (def.length >= value.length) {
       value = def;
-    }
+    } // Настройка заполнения шаблона вводимыми данными
+
 
     this.value = matrix.replace(/./g, function (a) {
+      // Заменяем "__" в шаблоне на вводимые пользователем данные
       return /[_\d]/.test(a) && i < value.length ? value.charAt(i++) : i >= value.length ? '' : a;
-    });
+    }); // Если маска пустая и пользователь нажал за поле ввода, то поле ввода номера очищается
 
     if (event.type === 'blur') {
       if (this.value.length == 2) {
         this.value = '';
       }
     } else {
+      /* Если пользователь ввел номер телефоне не полностью и нажал за заполе ввода
+       и потом вернулся, курсор устанавливается в нужное место */
       setCursorPosition(this.value.length, this);
     }
   }
@@ -4516,6 +4524,40 @@ function openByScroll(btnPressed, selector) {
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (modal);
+
+/***/ }),
+
+/***/ "./src/js/modules/showMoreStyle.js":
+/*!*****************************************!*\
+  !*** ./src/js/modules/showMoreStyle.js ***!
+  \*****************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0__);
+
+
+var showMoreStyle = function showMoreStyle(trigger, styles) {
+  var cards = document.querySelectorAll(styles),
+      btn = document.querySelector(trigger); // Добавление анимации ко всем карточкам
+
+  cards.forEach(function (card) {
+    card.classList.add('animated', 'fadeInUp');
+  }); // Показ скрытых карточек
+
+  btn.addEventListener('click', function (e) {
+    cards.forEach(function (card) {
+      card.classList.remove('hidden-lg', 'hidden-md', 'hidden-sm', "hidden-xs");
+      card.classList.add('col-sm-3', 'col-sm-offset-0', 'col-xs-10', 'col-xs-offset-1');
+    });
+    btn.remove();
+  });
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (showMoreStyle);
 
 /***/ }),
 
