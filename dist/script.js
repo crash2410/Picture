@@ -4412,6 +4412,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_filter__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./modules/filter */ "./src/js/modules/filter.js");
 /* harmony import */ var _modules_pictureSize__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./modules/pictureSize */ "./src/js/modules/pictureSize.js");
 /* harmony import */ var _modules_accordion__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./modules/accordion */ "./src/js/modules/accordion.js");
+/* harmony import */ var _modules_burger__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./modules/burger */ "./src/js/modules/burger.js");
+
 
 
 
@@ -4442,6 +4444,7 @@ window.addEventListener('DOMContentLoaded', function () {
   Object(_modules_filter__WEBPACK_IMPORTED_MODULE_8__["default"])();
   Object(_modules_pictureSize__WEBPACK_IMPORTED_MODULE_9__["default"])('.sizes-block');
   Object(_modules_accordion__WEBPACK_IMPORTED_MODULE_10__["default"])('.accordion-heading');
+  Object(_modules_burger__WEBPACK_IMPORTED_MODULE_11__["default"])('.burger-menu', '.burger');
 });
 
 /***/ }),
@@ -4504,6 +4507,40 @@ var accordion = function accordion(triggerSelector) {
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (accordion);
+
+/***/ }),
+
+/***/ "./src/js/modules/burger.js":
+/*!**********************************!*\
+  !*** ./src/js/modules/burger.js ***!
+  \**********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var burger = function burger(menuSelector, burgerSelector) {
+  var menuElement = document.querySelector(menuSelector),
+      burgerElement = document.querySelector(burgerSelector); // Скрываем бургер меню
+
+  menuElement.style.display = 'none'; // Открытие меню при ширине экрана в 992 пикселей и ниже
+
+  burgerElement.addEventListener('click', function () {
+    if (menuElement.style.display == 'none' && window.screen.availWidth < 993) {
+      menuElement.style.display = 'block';
+    } else {
+      menuElement.style.display = 'none';
+    }
+  }); // Закрытие меню при увеличении ширины экрана
+
+  window.addEventListener('resize', function () {
+    if (window.screen.availWidth > 992) {
+      menuElement.style.display = 'none';
+    }
+  });
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (burger);
 
 /***/ }),
 
