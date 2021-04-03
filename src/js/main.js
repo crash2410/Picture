@@ -5,8 +5,13 @@ import mask from './modules/mask';
 import checkTextInputs from './modules/checkTextInputs';
 import showMoreStyle from './modules/showMoreStyle';
 import calc from './modules/calc';
+import changeCalcState from './modules/changeCalcState';
 
 window.addEventListener('DOMContentLoaded', () => {
+    "use strict";
+    let caclState = {};
+    changeCalcState(caclState);
+
     modal('.button-design', '.popup-design', '.popup-content > button.popup-close');
     modal('.button-consultation', '.popup-consultation', '.popup-content > button.popup-close');
     modal('.fixed-gift', '.popup-gift', '.popup-content > button.popup-close', true);
@@ -14,7 +19,7 @@ window.addEventListener('DOMContentLoaded', () => {
     slider('.main-slider-item', 'vertical');
     slider('.feedback-slider-item', '', '.main-prev-btn', '.main-next-btn');
 
-    forms('form');
+    forms('form', caclState);
 
     mask('[name="phone"]');
     checkTextInputs('[name="name"]');
@@ -22,5 +27,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
     showMoreStyle('.button-styles', '#styles .row');
 
-    calc('#size', '#material', '#options', '.promocode', '.calc-price');
+    calc('#size', '#material', '#options', '.promocode', '.calc-price', caclState);
+
 });

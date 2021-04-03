@@ -2,7 +2,7 @@ import {
     postData
 } from '../services/services';
 
-const forms = (formSelector) => {
+const forms = (formSelector, state) => {
     const forms = document.querySelectorAll(formSelector),
         inputs = document.querySelectorAll('input'),
         upload = document.querySelectorAll('[name="upload"]');
@@ -73,21 +73,34 @@ const forms = (formSelector) => {
             statusMessage.appendChild(textMessage);
             // Формирование данных с формы
             const formData = new FormData(form);
+            console.log(formData);
+            // ~~ Если это форма калькулятора, то к данным из формы добавляются данные с объекта state ~~
+            if (form.classList.contains('calc_form')) {
+                for (let key in state) {
+                    formData.append(key, state[key]);
+                }
+            }
             let api;
             // В зависимости от формы выбираем куда отправлять данные
             form.closest('.popup-design') || form.classList.contains('calc_form') ? api = path.designer : api = path.question;
+
             // Отправка данных с формы на сервер
             postData(api, formData)
                 .then(data => {
-                    console.log(data);
                     statusImg.setAttribute('src', message.ok);
                     textMessage.textContent = message.success;
+                    // Очистка объекта modalState
+                    for (var key in state) {
+                        delete state[key];
+                    }
                 })
                 .catch(() => {
                     statusImg.setAttribute('src', message.fail);
                     textMessage.textContent = message.error;
                 })
                 .finally(() => {
+                    document.querySelector('.calc-price').textContent = 'Для расчета нужно выбрать размер картины и материал картины';
+                    form.reset();
                     clearInputs();
                     setTimeout(() => {
                         statusMessage.remove();

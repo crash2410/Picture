@@ -4351,6 +4351,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_checkTextInputs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/checkTextInputs */ "./src/js/modules/checkTextInputs.js");
 /* harmony import */ var _modules_showMoreStyle__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/showMoreStyle */ "./src/js/modules/showMoreStyle.js");
 /* harmony import */ var _modules_calc__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modules/calc */ "./src/js/modules/calc.js");
+/* harmony import */ var _modules_changeCalcState__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./modules/changeCalcState */ "./src/js/modules/changeCalcState.js");
+
 
 
 
@@ -4359,17 +4361,21 @@ __webpack_require__.r(__webpack_exports__);
 
 
 window.addEventListener('DOMContentLoaded', function () {
+  "use strict";
+
+  var caclState = {};
+  Object(_modules_changeCalcState__WEBPACK_IMPORTED_MODULE_7__["default"])(caclState);
   Object(_modules_modal__WEBPACK_IMPORTED_MODULE_0__["default"])('.button-design', '.popup-design', '.popup-content > button.popup-close');
   Object(_modules_modal__WEBPACK_IMPORTED_MODULE_0__["default"])('.button-consultation', '.popup-consultation', '.popup-content > button.popup-close');
   Object(_modules_modal__WEBPACK_IMPORTED_MODULE_0__["default"])('.fixed-gift', '.popup-gift', '.popup-content > button.popup-close', true);
   Object(_modules_slider__WEBPACK_IMPORTED_MODULE_1__["default"])('.main-slider-item', 'vertical');
   Object(_modules_slider__WEBPACK_IMPORTED_MODULE_1__["default"])('.feedback-slider-item', '', '.main-prev-btn', '.main-next-btn');
-  Object(_modules_form__WEBPACK_IMPORTED_MODULE_2__["default"])('form');
+  Object(_modules_form__WEBPACK_IMPORTED_MODULE_2__["default"])('form', caclState);
   Object(_modules_mask__WEBPACK_IMPORTED_MODULE_3__["default"])('[name="phone"]');
   Object(_modules_checkTextInputs__WEBPACK_IMPORTED_MODULE_4__["default"])('[name="name"]');
   Object(_modules_checkTextInputs__WEBPACK_IMPORTED_MODULE_4__["default"])('[name="message"]');
   Object(_modules_showMoreStyle__WEBPACK_IMPORTED_MODULE_5__["default"])('.button-styles', '#styles .row');
-  Object(_modules_calc__WEBPACK_IMPORTED_MODULE_6__["default"])('#size', '#material', '#options', '.promocode', '.calc-price');
+  Object(_modules_calc__WEBPACK_IMPORTED_MODULE_6__["default"])('#size', '#material', '#options', '.promocode', '.calc-price', caclState);
 });
 
 /***/ }),
@@ -4383,7 +4389,7 @@ window.addEventListener('DOMContentLoaded', function () {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-var calc = function calc(size, material, options, promocod, result) {
+var calc = function calc(size, material, options, promocod, result, state) {
   var sizeBlock = document.querySelector(size),
       materialBlock = document.querySelector(material),
       optionsBlock = document.querySelector(options),
@@ -4399,8 +4405,10 @@ var calc = function calc(size, material, options, promocod, result) {
       resultBlock.textContent = 'Пожалуйста, выберите размер и материал картины';
     } else if (promocodeBlock.value === 'IWANTPOPART') {
       resultBlock.textContent = Math.round(sum * 0.7);
+      state['price'] = Math.round(sum * 0.7);
     } else {
       resultBlock.textContent = sum;
+      state['price'] = sum;
     }
   };
 
@@ -4411,6 +4419,59 @@ var calc = function calc(size, material, options, promocod, result) {
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (calc);
+
+/***/ }),
+
+/***/ "./src/js/modules/changeCalcState.js":
+/*!*******************************************!*\
+  !*** ./src/js/modules/changeCalcState.js ***!
+  \*******************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var changeCalcState = function changeCalcState(state) {
+  var caclSize = document.querySelector('#size'),
+      calcMaterial = document.querySelector('#material'),
+      calcOptions = document.querySelector('#options'),
+      calcPromocode = document.querySelector('.promocode'); // Функция добавления выбранный/вводимых данных в объект caclState
+
+  function bindActionToElems(event, elem, prop) {
+    elem.addEventListener(event, function (e) {
+      e.preventDefault();
+
+      switch (elem.nodeName) {
+        case 'SELECT':
+          // Выбираем размер, материалы, доп. опции
+          if (elem.options[elem.selectedIndex].index == 0) {
+            delete state[prop];
+          } else {
+            state[prop] = elem.options[elem.selectedIndex].text;
+          }
+
+          break;
+
+        case 'INPUT':
+          // Ввод промокода
+          if (elem.value != 'IWANTPOPART') {
+            delete state[prop];
+          } else {
+            state[prop] = elem.value;
+          }
+
+          break;
+      }
+    });
+  }
+
+  bindActionToElems('change', caclSize, 'size');
+  bindActionToElems('change', calcMaterial, 'material');
+  bindActionToElems('change', calcOptions, 'options');
+  bindActionToElems('change', calcPromocode, 'promocode');
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (changeCalcState);
 
 /***/ }),
 
@@ -4475,7 +4536,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var forms = function forms(formSelector) {
+var forms = function forms(formSelector, state) {
   var forms = document.querySelectorAll(formSelector),
       inputs = document.querySelectorAll('input'),
       upload = document.querySelectorAll('[name="upload"]'); // Объект с состояниями отправки данных для пользователя
@@ -4547,18 +4608,31 @@ var forms = function forms(formSelector) {
       statusMessage.appendChild(textMessage); // Формирование данных с формы
 
       var formData = new FormData(form);
+      console.log(formData); // ~~ Если это форма калькулятора, то к данным из формы добавляются данные с объекта state ~~
+
+      if (form.classList.contains('calc_form')) {
+        for (var key in state) {
+          formData.append(key, state[key]);
+        }
+      }
+
       var api; // В зависимости от формы выбираем куда отправлять данные
 
       form.closest('.popup-design') || form.classList.contains('calc_form') ? api = path.designer : api = path.question; // Отправка данных с формы на сервер
 
       Object(_services_services__WEBPACK_IMPORTED_MODULE_6__["postData"])(api, formData).then(function (data) {
-        console.log(data);
         statusImg.setAttribute('src', message.ok);
-        textMessage.textContent = message.success;
+        textMessage.textContent = message.success; // Очистка объекта modalState
+
+        for (var key in state) {
+          delete state[key];
+        }
       }).catch(function () {
         statusImg.setAttribute('src', message.fail);
         textMessage.textContent = message.error;
       }).finally(function () {
+        document.querySelector('.calc-price').textContent = 'Для расчета нужно выбрать размер картины и материал картины';
+        form.reset();
         clearInputs();
         setTimeout(function () {
           statusMessage.remove();
