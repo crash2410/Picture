@@ -8,6 +8,7 @@ import calc from './modules/calc';
 import changeCalcState from './modules/changeCalcState';
 import filter from './modules/filter';
 import pictureSize from './modules/pictureSize';
+import accordion from './modules/accordion';
 
 window.addEventListener('DOMContentLoaded', () => {
     "use strict";
@@ -34,4 +35,6 @@ window.addEventListener('DOMContentLoaded', () => {
     filter();
 
     pictureSize('.sizes-block');
+
+    accordion('.accordion-heading', '.accordion-block');
 });
