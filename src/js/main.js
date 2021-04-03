@@ -36,5 +36,5 @@ window.addEventListener('DOMContentLoaded', () => {
 
     pictureSize('.sizes-block');
 
-    accordion('.accordion-heading', '.accordion-block');
+    accordion('.accordion-heading');
 });

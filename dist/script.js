@@ -4441,7 +4441,7 @@ window.addEventListener('DOMContentLoaded', function () {
   Object(_modules_calc__WEBPACK_IMPORTED_MODULE_6__["default"])('#size', '#material', '#options', '.promocode', '.calc-price', caclState);
   Object(_modules_filter__WEBPACK_IMPORTED_MODULE_8__["default"])();
   Object(_modules_pictureSize__WEBPACK_IMPORTED_MODULE_9__["default"])('.sizes-block');
-  Object(_modules_accordion__WEBPACK_IMPORTED_MODULE_10__["default"])('.accordion-heading', '.accordion-block');
+  Object(_modules_accordion__WEBPACK_IMPORTED_MODULE_10__["default"])('.accordion-heading');
 });
 
 /***/ }),
@@ -4459,24 +4459,48 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0__);
 
 
-var accordion = function accordion(triggerSelector, itemsSelector) {
-  var btns = document.querySelectorAll(triggerSelector),
-      blocks = document.querySelectorAll(itemsSelector); // Добавление анимации
-
-  blocks.forEach(function (block) {
-    block.classList.add('animated', 'fadeInDown');
-  }); // Открытие аккордиона при нажатии на кнопку
+var accordion = function accordion(triggerSelector) {
+  var btns = document.querySelectorAll(triggerSelector); // Открытие/закрытие аккордиона при нажатии на кнопку
 
   btns.forEach(function (btn) {
     btn.addEventListener('click', function () {
-      if (!this.classList.contains('active')) {
+      // Открытие/закрытие блока аккордиона
+      this.classList.toggle('active-style');
+      this.nextElementSibling.classList.toggle('active-content');
+
+      if (this.classList.contains('active-style')) {
         btns.forEach(function (btn) {
-          btn.classList.remove('active', 'active-style');
-        });
-        this.classList.add('active', 'active-style');
+          // Закрытие всех открытых блоков аккордиона
+          btn.classList.remove('active-style');
+          btn.nextElementSibling.classList.remove('active-content');
+          btn.nextElementSibling.style.maxHeight = '0px';
+        }); // Показ выбранного блока аккордиона 
+
+        this.classList.add('active-style');
+        this.nextElementSibling.classList.add('active-content');
+        this.nextElementSibling.style.maxHeight = this.nextElementSibling.scrollHeight + 80 + 'px';
+      } else {
+        // Скрытие блока аккордиона при повторном нажатии
+        this.nextElementSibling.style.maxHeight = '0px';
       }
     });
-  });
+  }); // ~~Реализация при помощи стилей~~
+  // blocks = document.querySelectorAll(itemsSelector);
+  // // Добавление анимации
+  // blocks.forEach(block => {
+  //     block.classList.add('animated', 'fadeInDown');
+  // });
+  // // Открытие аккордиона при нажатии на кнопку
+  // btns.forEach(btn => {
+  //     btn.addEventListener('click', function () {
+  //         if (!this.classList.contains('active')) {
+  //             btns.forEach(btn => {
+  //                 btn.classList.remove('active', 'active-style');
+  //             });
+  //             this.classList.add('active', 'active-style');
+  //         }
+  //     });
+  // });
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (accordion);
