@@ -11,38 +11,42 @@ const scrolling = (upSelector) => {
         }
     });
 
-    let links = document.querySelectorAll('[href^="#"]'),
-        speed = 0.2;
+    let links = document.querySelectorAll('[href^="#"]'), // ссылки
+        speed = 0.2; // скорость прокрутки к элементу
 
-        links.forEach(link => {
-            link.addEventListener('click', function(event) {
-                event.preventDefault();
-    
-                let widthTop = document.documentElement.scrollTop,
-                    hash = this.hash,
-                    toBlock = document.querySelector(hash).getBoundingClientRect().top,
-                    start = null;
-    
-                requestAnimationFrame(step);
-    
-                function step(time) {
-                    if (start === null) {
-                        start = time;
-                    }
-    
-                    let progress = time - start,
-                        r = (toBlock < 0 ? Math.max(widthTop - progress/speed, widthTop + toBlock) : Math.min(widthTop + progress/speed, widthTop + toBlock));
-    
-                        document.documentElement.scrollTo(0, r);
-    
-                    if (r != widthTop + toBlock) {
-                        requestAnimationFrame(step);
-                    } else {
-                        location.hash = hash;
-                    }
+    // Прокрутка страницы к элементу
+    links.forEach(link => {
+        link.addEventListener('click', function (event) {
+            event.preventDefault();
+
+            let widthTop = document.documentElement.scrollTop,
+                hash = this.hash,
+                toBlock = document.querySelector(hash).getBoundingClientRect().top,
+                start = null;
+
+            requestAnimationFrame(step);
+
+            // Анимация
+            function step(time) {
+                // Первый ли раз запускается эта анимация
+                if (start === null) {
+                    start = time;
                 }
-            });
+
+                let progress = time - start,
+                    // Колличество пикселей на которое необходимо пролистать страницу (вниз/вверх)
+                    r = (toBlock < 0 ? Math.max(widthTop - progress / speed, widthTop + toBlock) : Math.min(widthTop + progress / speed, widthTop + toBlock));
+                // Скролл страницы к полученным координатам
+                document.documentElement.scrollTo(0, r);
+                // Условие остановки анимации
+                if (r != widthTop + toBlock) {
+                    requestAnimationFrame(step);
+                } else {
+                    location.hash = hash;
+                }
+            }
         });
+    });
 
 
     // // Планый сколл на чистом JS
