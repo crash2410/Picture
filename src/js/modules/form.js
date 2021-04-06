@@ -87,6 +87,7 @@ const forms = (formSelector, state) => {
             // Отправка данных с формы на сервер
             postData(api, formData)
                 .then(data => {
+                    console.log(data);
                     statusImg.setAttribute('src', message.ok);
                     textMessage.textContent = message.success;
                     // Очистка объекта modalState

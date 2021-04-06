@@ -1,4 +1,7 @@
-const drop = () => {
+import {
+    postData
+} from '../services/services';
+const drop = (state) => {
     // drag *
     // dragend *
     // dragenter - объект над dropArea
@@ -7,9 +10,7 @@ const drop = () => {
     // dragover - объект зависает над dropArea
     // dragstart *
     // drop - объект отправлен в dropArea
-
     const fileInputs = document.querySelectorAll('[name="upload"]');
-
     // Перенос файла в блок
     ['dragenter', 'dragleave', 'dragover', 'drop'].forEach(eventName => {
         fileInputs.forEach(input => {
@@ -48,15 +49,38 @@ const drop = () => {
         });
     });
     // Добавление файла
-    fileInputs.forEach(input => {
-        input.addEventListener('drop', (e) => {
-            input.files = e.dataTransfer.files;
-            let dots;
-            const arr = input.files[0].name.split('.');
-
-            arr[0].length > 6 ? dots = "..." : dots = '.';
-            const name = arr[0].substring(0, 6) + dots + arr[1];
-            input.previousElementSibling.textContent = name;
+    ['drop', 'input'].forEach(eventName => {
+        fileInputs.forEach(input => {
+            input.addEventListener(eventName, (e) => {
+                try {
+                    input.files = e.dataTransfer.files;
+                } catch (error) {}
+                let dots;
+                const arr = input.files[0].name.split('.');
+                arr[0].length > 6 ? dots = "..." : dots = '.';
+                const name = arr[0].substring(0, 6) + dots + arr[1];
+                input.previousElementSibling.textContent = name;
+                console.log(input.nodeName);
+                // Отправка файлов на сервер сразу после drop/input (только в определенном блоке)
+                if (input.getAttribute('data-upload')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    let formData = new FormData();
+                    [...input.files].forEach(file => {
+                        formData.append('image', file);
+                        postData('assets/server.php', formData)
+                            .then(res => {
+                                console.log(res);
+                                input.previousElementSibling.textContent = 'Отправлено';
+                            })
+                            .finally(() => {
+                                setTimeout(() => {
+                                    input.previousElementSibling.textContent = 'Файл не выбран';
+                                }, 3000);
+                            });
+                    });
+                }
+            });
         });
     });
 };
